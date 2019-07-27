@@ -64,6 +64,7 @@ RenderModel Renderer::getFollowing() {
     }
     bool atLeastOneFollowing = false;
     assert(atLeastOneFollowing);
+    return renderables[0];
 }
 
 bool Renderer::isPointInRect(int rX, int rY, int x, int y, int w, int h) {

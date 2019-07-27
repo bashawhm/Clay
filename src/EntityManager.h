@@ -15,5 +15,9 @@ public:
     Entity* getFollowing();
 
     void simulate();
+    Entity* canPickup(const Entity &e);
+    bool isEntityInEntity(const Entity &e1, const Entity &e2);
+    void addToInventory(Entity *e, Entity *item);
+    bool isCarryable(Entity *e);
 
 };

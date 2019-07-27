@@ -120,6 +120,162 @@ bool testEntityManager_StartsEmpty() {
     return em.entities.size() == 0;
 }
 
+bool testEntityManager_isEntityInEntity(int n) {
+    bool allCorrect = true;
+    for (int i = 0; i < n; ++i) {
+        int x = abs(rand()%65535);
+        int y = abs(rand()%65535);
+        int w = abs(rand()%65535);
+        int h = abs(rand()%65535);
+        int tex = rand();
+        int hth = rand();
+        int res = rand();
+        int mvS = rand();
+        Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        int x2 = abs(rand()%(w))+x;
+        int y2 = abs(rand()%(h))+y;
+        int w2 = abs(rand()%(w));
+        int h2 = abs(rand()%(h));
+        Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+
+        EntityManager em;
+        bool correct = em.isEntityInEntity(e1, e2);
+        if (!correct) {
+            allCorrect = false;
+        }
+    }
+
+    return allCorrect;
+}
+
+bool testEntityManager_canPickup(int n) {
+    bool allCorrect = true;
+    for (int i = 0; i < n; ++i) {
+        int x = abs(rand()%65535);
+        int y = abs(rand()%65535);
+        int w = abs(rand()%65535);
+        int h = abs(rand()%65535);
+        int tex = rand();
+        int hth = rand();
+        int res = rand();
+        int mvS = rand();
+        Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        e1.attributes.push_back(Carryable);
+        int x2 = abs(rand()%(w))+x;
+        int y2 = abs(rand()%(h))+y;
+        int w2 = abs(rand()%(w));
+        int h2 = abs(rand()%(h));
+        Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+        e2.attributes.push_back(Carryable);
+
+        EntityManager em;
+        em.entities.push_back(&e1);
+        em.entities.push_back(&e2);
+        bool correct = (em.canPickup(e1) == &e2);
+        if (!correct) {
+            allCorrect = false;
+        }
+    }
+
+    return allCorrect;
+}
+
+bool testEntityManager_carryable() {
+    int x = abs(rand()%65535);
+    int y = abs(rand()%65535);
+    int w = abs(rand()%65535);
+    int h = abs(rand()%65535);
+    int tex = rand();
+    int hth = rand();
+    int res = rand();
+    int mvS = rand();
+    Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    int x2 = abs(rand()%(w))+x;
+    int y2 = abs(rand()%(h))+y;
+    int w2 = abs(rand()%(w));
+    int h2 = abs(rand()%(h));
+    Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    e2.attributes.push_back(Carryable);
+
+    EntityManager em;
+    em.entities.push_back(&e1);
+    em.entities.push_back(&e2);
+    Entity *item = em.canPickup(e1);
+    em.addToInventory(&e1, item);
+    if (!(item->inInventory)) {
+        return false;
+    }
+    bool isContained = (e1.inventory[0] == item);
+    return isContained;
+
+}
+
+bool testEntityManager_dontRenderInventoryEntitys() {
+    int x = abs(rand()%65535);
+    int y = abs(rand()%65535);
+    int w = abs(rand()%65535);
+    int h = abs(rand()%65535);
+    int tex = rand();
+    int hth = rand();
+    int res = rand();
+    int mvS = rand();
+    Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    e1.attributes.push_back(Carryable);
+    int x2 = abs(rand()%(w))+x;
+    int y2 = abs(rand()%(h))+y;
+    int w2 = abs(rand()%(w));
+    int h2 = abs(rand()%(h));
+    Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    e2.attributes.push_back(Carryable);
+
+    EntityManager em;
+    em.entities.push_back(&e1);
+    em.entities.push_back(&e2);
+    Entity *item = em.canPickup(e1);
+    em.addToInventory(&e1, item);
+    vector<RenderModel> models = em.getRenderModels();
+    for (unsigned long i = 0; i < em.entities.size(); ++i) {
+        if (em.entities[i]->inInventory) {
+            for (unsigned long j = 0; j < models.size(); ++j) {
+                if (models[i] == em.entities[i]->getRenderModel()) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool testEntityManager_noDuplicateInventoryItems() {
+    int x = abs(rand()%65535);
+    int y = abs(rand()%65535);
+    int w = abs(rand()%65535);
+    int h = abs(rand()%65535);
+    int tex = rand();
+    int hth = rand();
+    int res = rand();
+    int mvS = rand();
+    Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    e1.attributes.push_back(Carryable);
+    int x2 = abs(rand()%(w))+x;
+    int y2 = abs(rand()%(h))+y;
+    int w2 = abs(rand()%(w));
+    int h2 = abs(rand()%(h));
+    Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    e2.attributes.push_back(Carryable);
+
+    EntityManager em;
+    em.entities.push_back(&e1);
+    em.entities.push_back(&e2);
+    Entity *item = em.canPickup(e1);
+    em.addToInventory(&e1, item);
+    em.addToInventory(&e1, item);
+    if (em.entities[0]->inventory.size() > 1) {
+        return false;
+    }
+    return true;
+}
+
 bool runAllTests(int n) {
     test = true;
     srand(time(NULL));
@@ -159,6 +315,41 @@ bool runAllTests(int n) {
         allCorrect = false;
     } else {
         cerr << "\033[1;32mPassed EntityManager_StartsEmpty test" << endl;
+    }
+    correct = testEntityManager_isEntityInEntity(n);
+    if (!correct) {
+        cerr << "\033[1;31mFailed EntityManager_isEntityInEntity test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed EntityManager_isEntityInEntity test" << endl;
+    }
+    correct = testEntityManager_canPickup(n);
+    if (!correct) {
+        cerr << "\033[1;31mFailed EntityManager_canPickup test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed EntityManager_canPickup test" << endl;
+    }
+    correct = testEntityManager_carryable();
+    if (!correct) {
+        cerr << "\033[1;31mFailed EntityManager_carryable test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed EntityManager_carryable test" << endl;
+    }
+    correct = testEntityManager_dontRenderInventoryEntitys();
+    if (!correct) {
+        cerr << "\033[1;31mFailed EntityManager_dontRenderInventoryEntitys test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed EntityManager_dontRenderInventoryEntitys test" << endl;
+    }
+    correct = testEntityManager_noDuplicateInventoryItems();
+    if (!correct) {
+        cerr << "\033[1;31mFailed testEntityManager_noDuplicateInventoryItems test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed testEntityManager_noDuplicateInventoryItems test" << endl;
     }
 
     cerr << "\033[0m";

@@ -10,7 +10,7 @@
 
 enum EntityAttributes {
     AutoWandering,
-
+    Carryable,
 };
 
 class Entity {
@@ -25,6 +25,7 @@ public:
     SDL_Rect dRect; //Display rect, not the real rect, used for display only
     int floor;
     bool following;
+    bool inInventory;
     TextureIdx tex;
 
     int health;
@@ -34,9 +35,11 @@ public:
     std::vector<EntityAttributes> attributes;
 
     void simulate(SDL_Rect bounds);
+    void moveX(int moveBy);
+    void moveY(int moveBy);
     
 
-    bool operator ==(const Entity &e) {
+    bool operator ==(const Entity &e) const {
         if (rRect.x != e.rRect.x) {
             return false;
         } else if (rRect.y != e.rRect.y) {
@@ -56,6 +59,8 @@ public:
         } else if (floor != e.floor) {
             return false;
         } else if (following != e.following) {
+            return false;
+        } else if (inInventory != e.inInventory) {
             return false;
         } else if (tex != e.tex) {
             return false;
@@ -84,7 +89,7 @@ public:
         return true;
     }
 
-    bool operator !=(const Entity & e) {
+    bool operator !=(const Entity & e) const {
         return !(*this == e);
     }
 };

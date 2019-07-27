@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
             for (int i = 0; i < numGrass; ++i) {
                 Entity *tGrass = new Entity(rand()%(floorWidth-32), rand()%(floorHeight-32), 32, 32, TallGrass, 1, 0, 1);
                 tGrass->attributes.push_back(AutoWandering);
+                tGrass->attributes.push_back(Carryable);
                 stage.eManager.entities.push_back(tGrass);
             }
 
@@ -84,22 +85,38 @@ int main(int argc, char **argv) {
             switch (event.key.keysym.sym) {
                 case SDLK_w: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->rRect.y -= player->moveSpeed;
+                    player->moveY(-player->moveSpeed);
                     break;
                 }
                 case SDLK_a: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->rRect.x -= player->moveSpeed;
+                    player->moveX(-player->moveSpeed);
                     break;
                 }
                 case SDLK_s: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->rRect.y += player->moveSpeed;
+                    player->moveY(player->moveSpeed);
                     break;
                 }
                 case SDLK_d: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->rRect.x += player->moveSpeed;
+                    player->moveX(player->moveSpeed);
+                    break;
+                }
+                case SDLK_SPACE: {
+                    Entity *player = stage.eManager.getFollowing();
+                    for (unsigned long i = 0; i < stage.eManager.entities.size(); ++i) {
+                        if (stage.eManager.entities[i]->floor == i) {
+                            continue;
+                        }
+                        if (stage.eManager.isEntityInEntity(*player, *(stage.eManager.entities[i]))) {
+                            Entity *item = stage.eManager.canPickup(*(stage.eManager.entities[i]));
+                            if (item != nullptr) {
+                                stage.eManager.addToInventory(player, item);
+                                break;
+                            }
+                        }
+                    }
                     break;
                 }
 

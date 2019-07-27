@@ -24,6 +24,7 @@ Entity::Entity(int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int
 
     floor = 0;
     following = false;
+    inInventory = false;
     tex = t;
     health = hth;
     resolve = res;
@@ -35,12 +36,28 @@ RenderModel Entity::getRenderModel() {
     return m;
 }
 
+void Entity::moveX(int moveBy) {
+    rRect.x += moveBy;
+    for (unsigned long i = 0; i < inventory.size(); ++i) {
+        inventory[i]->moveX(moveBy);
+    }
+}
+
+void Entity::moveY(int moveBy) {
+    rRect.y += moveBy;
+    for (unsigned long i = 0; i < inventory.size(); ++i) {
+        inventory[i]->moveY(moveBy);
+    }
+
+}
+
 string Entity::serialize() {
     json j = {
         {"rRect", {rRect.x, rRect.y, rRect.w, rRect.h}},
         {"dRect", {dRect.x, dRect.y, dRect.w, dRect.h}},
         {"floor", floor},
         {"following", following},
+        {"inInventory", inInventory},
         {"tex", tex},
         {"health", health},
         {"resolve", resolve},
@@ -75,6 +92,7 @@ void Entity::deserialize(string in) {
 
     floor = j["floor"];
     following = j["following"];
+    inInventory = j["inInventory"];
     tex = j["tex"];
     health = j["health"];
     resolve = j["resolve"];
