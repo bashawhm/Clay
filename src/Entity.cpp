@@ -11,7 +11,8 @@ using json = nlohmann::json;
 
 using namespace std;
 
-Entity::Entity(int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int mvS) {
+Entity::Entity(string eName, int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int mvS) {
+    name = eName;
     rRect.x = rX;
     rRect.y = rY;
     rRect.w = w;
@@ -53,6 +54,7 @@ void Entity::moveY(int moveBy) {
 
 string Entity::serialize() {
     json j = {
+        {"name", name},
         {"rRect", {rRect.x, rRect.y, rRect.w, rRect.h}},
         {"dRect", {dRect.x, dRect.y, dRect.w, dRect.h}},
         {"floor", floor},
@@ -80,6 +82,7 @@ void Entity::deserialize(string in) {
     inventory.clear();
     attributes.clear();
     
+    name = j["name"];
     rRect.x = j["rRect"][0];
     rRect.y = j["rRect"][1];
     rRect.w = j["rRect"][2];
@@ -101,7 +104,7 @@ void Entity::deserialize(string in) {
     attributes = att;
     vector<string> inv = j["inventory"];
     for (unsigned long i = 0; i < inv.size(); ++i) {
-        Entity *e = new Entity(0, 0, 0, 0, None, 0, 0, 0);
+        Entity *e = new Entity("", 0, 0, 0, 0, None, 0, 0, 0);
         e->deserialize(inv[i]);
         inventory.push_back(e);
     }

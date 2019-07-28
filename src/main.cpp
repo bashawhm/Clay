@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "SDL2/SDL2_framerate.h"
+#include "SDL2/SDL_messagebox.h"
 
 #include "Renderer.h"
 #include "RenderModel.h"
@@ -24,17 +25,17 @@ int main(int argc, char **argv) {
             return -1;
         } else if (strcmp(argv[1], "--gen") == 0) {
             Stage stage;
-            int floorWidth = 1920;
-            int floorHeight = 1080;
-            Entity *floor = new Entity(0, 0, floorWidth, floorHeight, Grass, 10000000, 0, 0);
-            Entity *e = new Entity(50, 50, 10, 10, Dot, 50, 10, 10);
+            int floorWidth = 19200;    //Arbitrary sizes based on the pixel width of the original image x10
+            int floorHeight = 10800;
+            Entity *floor = new Entity("Floor", 0, 0, floorWidth, floorHeight, Grass, 10000000, 0, 0);
+            Entity *e = new Entity("Player", 50, 50, 10, 10, Dot, 50, 10, 10);
             e->following = true;
             stage.eManager.entities.push_back(floor);
             stage.eManager.entities.push_back(e);
 
-            int numGrass = rand() % 50;
+            int numGrass = rand() % 300;
             for (int i = 0; i < numGrass; ++i) {
-                Entity *tGrass = new Entity(rand()%(floorWidth-32), rand()%(floorHeight-32), 32, 32, TallGrass, 1, 0, 1);
+                Entity *tGrass = new Entity("Grass", rand()%(floorWidth-32), rand()%(floorHeight-32), 32, 32, TallGrass, 1, 0, 1);
                 tGrass->attributes.push_back(AutoWandering);
                 tGrass->attributes.push_back(Carryable);
                 stage.eManager.entities.push_back(tGrass);
@@ -117,6 +118,18 @@ int main(int argc, char **argv) {
                             }
                         }
                     }
+                    break;
+                }
+                case SDLK_e: {
+                    Entity *player = stage.eManager.getFollowing();
+                    SDL_MessageBoxButtonData buttons = {SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "Close"};
+                    string inv;
+                    for (unsigned long i = 0; i < player->inventory.size(); ++i) {
+                        inv += player->inventory[i]->name + "\n";
+                    }
+                    SDL_MessageBoxData message = {SDL_MESSAGEBOX_INFORMATION, NULL, "Inventory", inv.c_str(), 1, &buttons, NULL};
+                    int butId;
+                    SDL_ShowMessageBox(&message, &butId);
                     break;
                 }
 

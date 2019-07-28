@@ -25,8 +25,8 @@ bool testEntitySerialization(int n) {
         int res = rand();
         int mvS = rand();
         int att = rand();
-        Entity e(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
-        Entity obj(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity e("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity obj("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
         e.inventory.push_back(&obj);
         e.attributes.push_back((EntityAttributes)att);
         string check = e.serialize();
@@ -38,8 +38,8 @@ bool testEntitySerialization(int n) {
         int hth2 = rand();
         int res2 = rand();
         int mvS2 = rand();
-        Entity e2(x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, mvS2);
-        Entity obj2(x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, mvS2);
+        Entity e2(" ", x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, mvS2);
+        Entity obj2("", x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, mvS2);
         e2.inventory.push_back(&obj2);
         e2.deserialize(check);
         if (e != e2) {
@@ -131,12 +131,12 @@ bool testEntityManager_isEntityInEntity(int n) {
         int hth = rand();
         int res = rand();
         int mvS = rand();
-        Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
         int x2 = abs(rand()%(w))+x;
         int y2 = abs(rand()%(h))+y;
         int w2 = abs(rand()%(w));
         int h2 = abs(rand()%(h));
-        Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+        Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
 
         EntityManager em;
         bool correct = em.isEntityInEntity(e1, e2);
@@ -159,13 +159,13 @@ bool testEntityManager_canPickup(int n) {
         int hth = rand();
         int res = rand();
         int mvS = rand();
-        Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
         e1.attributes.push_back(Carryable);
         int x2 = abs(rand()%(w))+x;
         int y2 = abs(rand()%(h))+y;
         int w2 = abs(rand()%(w));
         int h2 = abs(rand()%(h));
-        Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+        Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
         e2.attributes.push_back(Carryable);
 
         EntityManager em;
@@ -189,12 +189,12 @@ bool testEntityManager_carryable() {
     int hth = rand();
     int res = rand();
     int mvS = rand();
-    Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
     int x2 = abs(rand()%(w))+x;
     int y2 = abs(rand()%(h))+y;
     int w2 = abs(rand()%(w));
     int h2 = abs(rand()%(h));
-    Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
     e2.attributes.push_back(Carryable);
 
     EntityManager em;
@@ -219,13 +219,13 @@ bool testEntityManager_dontRenderInventoryEntitys() {
     int hth = rand();
     int res = rand();
     int mvS = rand();
-    Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
     e1.attributes.push_back(Carryable);
     int x2 = abs(rand()%(w))+x;
     int y2 = abs(rand()%(h))+y;
     int w2 = abs(rand()%(w));
     int h2 = abs(rand()%(h));
-    Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
     e2.attributes.push_back(Carryable);
 
     EntityManager em;
@@ -255,13 +255,13 @@ bool testEntityManager_noDuplicateInventoryItems() {
     int hth = rand();
     int res = rand();
     int mvS = rand();
-    Entity e1(x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
     e1.attributes.push_back(Carryable);
     int x2 = abs(rand()%(w))+x;
     int y2 = abs(rand()%(h))+y;
     int w2 = abs(rand()%(w));
     int h2 = abs(rand()%(h));
-    Entity e2(x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
     e2.attributes.push_back(Carryable);
 
     EntityManager em;

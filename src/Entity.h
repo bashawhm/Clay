@@ -15,7 +15,7 @@ enum EntityAttributes {
 
 class Entity {
 public:
-    Entity(int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int mvS);
+    Entity(std::string eName, int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int mvS);
     std::string serialize();
     void deserialize(std::string in);
 
@@ -27,6 +27,7 @@ public:
     bool following;
     bool inInventory;
     TextureIdx tex;
+    std::string name;
 
     int health;
     int resolve;
@@ -63,6 +64,8 @@ public:
         } else if (inInventory != e.inInventory) {
             return false;
         } else if (tex != e.tex) {
+            return false;
+        } else if (name != e.name) {
             return false;
         } else if (health != e.health) {
             return false;

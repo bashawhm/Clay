@@ -26,7 +26,7 @@ void EntityManager::deserialize(string in) {
 
     vector<string> ents = j["entities"];
     for (unsigned long i = 0; i < ents.size(); ++i) {
-        Entity *e = new Entity(-1, -1, -1, -1, None, -1, -1, -1);
+        Entity *e = new Entity("", -1, -1, -1, -1, None, -1, -1, -1);
         e->deserialize(ents[i]);
         entities.push_back(e);
     }
@@ -74,22 +74,32 @@ Entity* EntityManager::canPickup(const Entity &e) {
             continue;
         }
         
-        if (e == *(entities[i])) {
+        if (&e == entities[i]) {
             continue;
         }
-        if (isEntityInEntity(e, *entities[i])) {
-            return entities[i];
+        if (!entities[i]->inInventory) {
+            if (isEntityInEntity(e, *entities[i])) {
+                return entities[i];
+            }
         }
     }
     return nullptr;
 }
 
-void EntityManager::addToInventory(Entity *e, Entity *item) {
+bool EntityManager::isInInventory(Entity *e, Entity *item) {
     for (unsigned long i = 0; i < e->inventory.size(); ++i) {
         if (e->inventory[i] == item) {
-            return;
+            return true;
         }
     }
+    return false;
+}
+
+void EntityManager::addToInventory(Entity *e, Entity *item) {
+    if (isInInventory(e, item)) {
+        return;
+    }
+
     e->inventory.push_back(item);
     item->inInventory = true;
 }
