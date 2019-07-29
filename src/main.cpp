@@ -13,6 +13,41 @@
 #include "EntityManager.h"
 #include "Stage.h"
 
+void showHelp() {
+
+    SDL_MessageBoxButtonData buttons = {SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "Close"};
+    string help;
+    help += "Press h to see this menu\n";
+    help += "Press w,a,s,d to move\n";
+    help += "Press Space to pickup an item\n";
+    help += "Press e to show your inventory\n";
+    help += "Press i to show your status info\n";
+    SDL_MessageBoxData message = {SDL_MESSAGEBOX_INFORMATION, NULL, "Help", help.c_str(), 1, &buttons, NULL};
+    int butId;
+    SDL_ShowMessageBox(&message, &butId);
+}
+
+void showEntityStatus(Entity *e) {
+    SDL_MessageBoxButtonData buttons = {SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "Close"};
+    string status;
+    status += "Name: ";
+        status += e->name;
+        status += "\n";
+    status += "Health: ";
+        status += to_string(e->health);
+        status += "\n";
+    status += "Resolve: ";
+        status += to_string(e->resolve);
+        status += "\n";
+    status += "Move Speed: ";
+        status += to_string(e->moveSpeed);
+        status += "\n";
+    SDL_MessageBoxData message = {SDL_MESSAGEBOX_INFORMATION, NULL, "Status", status.c_str(), 1, &buttons, NULL};
+    int butId;
+    SDL_ShowMessageBox(&message, &butId);
+
+}
+
 int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
     srand(time(NULL));
@@ -28,7 +63,7 @@ int main(int argc, char **argv) {
             int floorWidth = 19200;    //Arbitrary sizes based on the pixel width of the original image x10
             int floorHeight = 10800;
             Entity *floor = new Entity("Floor", 0, 0, floorWidth, floorHeight, Grass, 10000000, 0, 0);
-            Entity *e = new Entity("Player", 50, 50, 10, 10, Dot, 50, 10, 10);
+            Entity *e = new Entity("Player", 500, 500, 10, 10, Dot, 50, 10, 10);
             e->following = true;
             stage.eManager.entities.push_back(floor);
             stage.eManager.entities.push_back(e);
@@ -130,6 +165,15 @@ int main(int argc, char **argv) {
                     SDL_MessageBoxData message = {SDL_MESSAGEBOX_INFORMATION, NULL, "Inventory", inv.c_str(), 1, &buttons, NULL};
                     int butId;
                     SDL_ShowMessageBox(&message, &butId);
+                    break;
+                }
+                case SDLK_i: {
+                    Entity *player = stage.eManager.getFollowing();
+                    showEntityStatus(player);
+                    break;
+                }
+                case SDLK_h: {
+                    showHelp();
                     break;
                 }
 
