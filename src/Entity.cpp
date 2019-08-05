@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 using namespace std;
 
-Entity::Entity(string eName, int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int mvS) {
+Entity::Entity(string eName, int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int intim,  int mvS) {
     name = eName;
     rRect.x = rX;
     rRect.y = rY;
@@ -29,12 +29,22 @@ Entity::Entity(string eName, int rX, int rY, int w, int h, TextureIdx t, int hth
     tex = t;
     health = hth;
     resolve = res;
+    intimidation = intim;
     moveSpeed = mvS;
 }
 
 RenderModel Entity::getRenderModel() {
     RenderModel m(rRect, dRect, following, tex, moveSpeed);
     return m;
+}
+
+bool Entity::hasAttribute(EntityAttributes att) {
+    for (unsigned long i = 0; i < attributes.size(); ++i) {
+        if (attributes[i] == att) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Entity::moveX(int moveBy) {
@@ -63,6 +73,7 @@ string Entity::serialize() {
         {"tex", tex},
         {"health", health},
         {"resolve", resolve},
+        {"intimidation", intimidation},
         {"moveSpeed", moveSpeed},
         {"attributes", attributes},
     };
@@ -99,12 +110,13 @@ void Entity::deserialize(string in) {
     tex = j["tex"];
     health = j["health"];
     resolve = j["resolve"];
+    intimidation = j["intimidation"];
     moveSpeed = j["moveSpeed"];
     vector<EntityAttributes> att = j["attributes"];
     attributes = att;
     vector<string> inv = j["inventory"];
     for (unsigned long i = 0; i < inv.size(); ++i) {
-        Entity *e = new Entity("", 0, 0, 0, 0, None, 0, 0, 0);
+        Entity *e = new Entity("", 0, 0, 0, 0, None, 0, 0, 0, 0);
         e->deserialize(inv[i]);
         inventory.push_back(e);
     }
@@ -132,8 +144,8 @@ void Entity::simulate(SDL_Rect bounds) {
                     dyn = -1*rand() % moveSpeed;
                 }
 
-                rRect.x += (dxp + dxn);
-                rRect.y += (dyp + dyn);
+                moveX(dxp + dxn);
+                moveY(dyp + dyn);
                 break;
             }
         }

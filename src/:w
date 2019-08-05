@@ -21,9 +21,5 @@ public:
     void addToInventory(Entity *e, Entity *item);
     bool isCarryable(Entity *e);
     std::vector<Entity*> getNClosestEntities(Entity *e, int n);
-    int getDistanceTo(Entity *e, Entity *e2);
-    int getXDistanceTo(Entity *e, Entity *e2);
-    int getYDistanceTo(Entity *e, Entity *e2);
-    void handleFearfulEntity(Entity *e);
 
 };

@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 using json = nlohmann::json;
@@ -26,7 +27,7 @@ void EntityManager::deserialize(string in) {
 
     vector<string> ents = j["entities"];
     for (unsigned long i = 0; i < ents.size(); ++i) {
-        Entity *e = new Entity("", -1, -1, -1, -1, None, -1, -1, -1);
+        Entity *e = new Entity("", -1, -1, -1, -1, None, -1, -1, -1, -1);
         e->deserialize(ents[i]);
         entities.push_back(e);
     }
@@ -104,8 +105,94 @@ void EntityManager::addToInventory(Entity *e, Entity *item) {
     item->inInventory = true;
 }
 
+int EntityManager::getXDistanceTo(Entity *e, Entity *e2) {
+    int origin1x = (e->rRect.x + e->rRect.w) / 2;
+    int origin2x = (e2->rRect.x + e2->rRect.w) / 2;
+
+    int dx = origin2x - origin1x;
+
+    return dx;
+}
+
+int EntityManager::getYDistanceTo(Entity *e, Entity *e2) {
+    int origin1y = (e->rRect.y + e->rRect.h) / 2;
+    int origin2y = (e2->rRect.y + e2->rRect.h) / 2;
+
+    int dy = origin2y - origin1y;
+
+    return dy;
+}
+
+int EntityManager::getDistanceTo(Entity *e, Entity *e2) {
+    int dx = getXDistanceTo(e, e2);
+    int dy = getYDistanceTo(e, e2);
+
+    return sqrt((dx * dx) + (dy * dy));;    
+}
+
+
+bool entSort(pair<int, Entity *> e1, pair<int, Entity *> e2) {
+    return (e1.first < e2.first);
+}
+
+vector<Entity*> EntityManager::getNClosestEntities(Entity *e, int n) {
+    vector<pair<int, Entity*>> distance;
+    for (unsigned long i = 0; i < entities.size(); ++i) {
+        if (entities[i] == e) {
+            continue;
+        }
+        pair<int, Entity *> e1;
+        e1.first = getDistanceTo(e, entities[i]);
+        e1.second = entities[i];
+        distance.push_back(e1);
+    }
+    sort(distance.begin(), distance.end(), entSort);
+    vector<Entity*> ents;
+    for (int i = 0; i < n; ++i) {
+        ents.push_back(distance[i].second);
+    }
+
+    return ents;
+}
+
+void EntityManager::handleFearfulEntity(Entity *e) {
+    vector<Entity *> ents = getNClosestEntities(e, 5);
+    vector<Entity *> entsInRange;
+    for (unsigned long i = 0; i < ents.size(); ++i) {
+        int dis = getDistanceTo(e, ents[i]);
+        if (dis <= (10 * e->moveSpeed)) {
+                entsInRange.push_back(ents[i]);
+        }
+    }
+     if (entsInRange.size() == 0) {
+        return;
+    }
+
+    int aveX = 0;
+    int aveY = 0;
+    for (unsigned long i = 0; i < entsInRange.size(); i++) {
+        aveX += getXDistanceTo(e, entsInRange[i]);
+        aveY += getYDistanceTo(e, entsInRange[i]);
+    }
+    aveX /= entsInRange.size();
+    aveY /= entsInRange.size();
+    int aggX = -1;
+    int aggY = -1;
+    if (aveX < 0) {
+        aggX *= -1;
+    }
+    if (aveY < 0) {
+        aggY *= -1;
+    }
+    e->moveX(e->moveSpeed * aggX);
+    e->moveY(e->moveSpeed * aggY);
+}
+
 void EntityManager::simulate() {
     for (unsigned long i = 0; i < entities.size(); ++i) {
         entities[i]->simulate(entities[entities[i]->floor]->rRect);
+        if (entities[i]->hasAttribute(Fearful)) {
+            handleFearfulEntity(entities[i]);
+        }
     }
 }

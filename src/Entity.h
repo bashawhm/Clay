@@ -11,11 +11,12 @@
 enum EntityAttributes {
     AutoWandering,
     Carryable,
+    Fearful,
 };
 
 class Entity {
 public:
-    Entity(std::string eName, int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int mvS);
+    Entity(std::string eName, int rX, int rY, int w, int h, TextureIdx t, int hth, int res, int intim, int mvS);
     std::string serialize();
     void deserialize(std::string in);
 
@@ -31,6 +32,7 @@ public:
 
     int health;
     int resolve;
+    int intimidation;
     int moveSpeed;
     std::vector<Entity*> inventory;
     std::vector<EntityAttributes> attributes;
@@ -38,6 +40,7 @@ public:
     void simulate(SDL_Rect bounds);
     void moveX(int moveBy);
     void moveY(int moveBy);
+    bool hasAttribute(EntityAttributes att);
     
 
     bool operator ==(const Entity &e) const {
@@ -70,6 +73,8 @@ public:
         } else if (health != e.health) {
             return false;
         } else if (resolve != e.resolve) {
+            return false;
+        } else if (intimidation != e.intimidation) {
             return false;
         } else if (moveSpeed != e.moveSpeed) {
             return false;

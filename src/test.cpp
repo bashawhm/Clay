@@ -23,10 +23,11 @@ bool testEntitySerialization(int n) {
         int tex = rand();
         int hth = rand();
         int res = rand();
+        int intim = rand();
         int mvS = rand();
         int att = rand();
-        Entity e("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
-        Entity obj("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity e("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
+        Entity obj("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
         e.inventory.push_back(&obj);
         e.attributes.push_back((EntityAttributes)att);
         string check = e.serialize();
@@ -37,9 +38,10 @@ bool testEntitySerialization(int n) {
         int tex2 = rand();
         int hth2 = rand();
         int res2 = rand();
+        int intim2 = rand();
         int mvS2 = rand();
-        Entity e2(" ", x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, mvS2);
-        Entity obj2("", x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, mvS2);
+        Entity e2(" ", x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, intim2, mvS2);
+        Entity obj2("", x2, y2, w2, h2, (TextureIdx)tex2, hth2, res2, intim2, mvS2);
         e2.inventory.push_back(&obj2);
         e2.deserialize(check);
         if (e != e2) {
@@ -49,6 +51,23 @@ bool testEntitySerialization(int n) {
     }
     return allCorrect;
 }
+
+bool testEntity_hasAttribute() {
+    int x = rand();
+    int y = rand();
+    int w = rand();
+    int h = rand();
+    int tex = rand();
+    int hth = rand();
+    int res = rand();
+    int intim = rand();
+    int mvS = rand();
+    int att = rand();
+    Entity e("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
+    e.attributes.push_back((EntityAttributes)att);
+    return e.hasAttribute((EntityAttributes)att);
+}
+
 
 bool testRendererSerialization(int n) {
     bool allCorrect = true;
@@ -130,13 +149,14 @@ bool testEntityManager_isEntityInEntity(int n) {
         int tex = rand();
         int hth = rand();
         int res = rand();
+        int intim = rand();
         int mvS = rand();
-        Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
         int x2 = abs(rand()%(w))+x;
         int y2 = abs(rand()%(h))+y;
         int w2 = abs(rand()%(w));
         int h2 = abs(rand()%(h));
-        Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+        Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, intim, mvS);
 
         EntityManager em;
         bool correct = em.isEntityInEntity(e1, e2);
@@ -158,14 +178,15 @@ bool testEntityManager_canPickup(int n) {
         int tex = rand();
         int hth = rand();
         int res = rand();
+        int intim = rand();
         int mvS = rand();
-        Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+        Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
         e1.attributes.push_back(Carryable);
         int x2 = abs(rand()%(w))+x;
         int y2 = abs(rand()%(h))+y;
         int w2 = abs(rand()%(w));
         int h2 = abs(rand()%(h));
-        Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+        Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, intim, mvS);
         e2.attributes.push_back(Carryable);
 
         EntityManager em;
@@ -188,13 +209,14 @@ bool testEntityManager_carryable() {
     int tex = rand();
     int hth = rand();
     int res = rand();
+    int intim = rand();
     int mvS = rand();
-    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
     int x2 = abs(rand()%(w))+x;
     int y2 = abs(rand()%(h))+y;
     int w2 = abs(rand()%(w));
     int h2 = abs(rand()%(h));
-    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, intim, mvS);
     e2.attributes.push_back(Carryable);
 
     EntityManager em;
@@ -218,14 +240,15 @@ bool testEntityManager_dontRenderInventoryEntitys() {
     int tex = rand();
     int hth = rand();
     int res = rand();
+    int intim = rand();
     int mvS = rand();
-    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
     e1.attributes.push_back(Carryable);
     int x2 = abs(rand()%(w))+x;
     int y2 = abs(rand()%(h))+y;
     int w2 = abs(rand()%(w));
     int h2 = abs(rand()%(h));
-    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, intim, mvS);
     e2.attributes.push_back(Carryable);
 
     EntityManager em;
@@ -254,14 +277,15 @@ bool testEntityManager_noDuplicateInventoryItems() {
     int tex = rand();
     int hth = rand();
     int res = rand();
+    int intim = rand();
     int mvS = rand();
-    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, mvS);
+    Entity e1("", x, y, w, h, (TextureIdx)tex, hth, res, intim, mvS);
     e1.attributes.push_back(Carryable);
     int x2 = abs(rand()%(w))+x;
     int y2 = abs(rand()%(h))+y;
     int w2 = abs(rand()%(w));
     int h2 = abs(rand()%(h));
-    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, mvS);
+    Entity e2("", x2, y2, w2, h2, (TextureIdx)tex, hth, res, intim, mvS);
     e2.attributes.push_back(Carryable);
 
     EntityManager em;
@@ -275,6 +299,48 @@ bool testEntityManager_noDuplicateInventoryItems() {
     }
     return true;
 }
+
+bool testEntityManager_getNClosestEntities() {
+    EntityManager em;
+    int x = abs(rand()%65535);
+    int y = abs(rand()%65535);
+    int w = abs(rand()%65535);
+    int h = abs(rand()%65535);
+    for (int i = 0; i < 5; ++i) {
+        int tex = rand();
+        int hth = rand();
+        int res = rand();
+        int intim = rand();
+        int mvS = rand();
+        Entity *e = new Entity("", x+(i*10), y+(i*10), w, h, (TextureIdx)tex, hth, res, intim, mvS);
+        em.entities.push_back(e);
+    }
+    vector<Entity*> ents = em.getNClosestEntities(em.entities[0], 2);
+    if (ents.size() != 2) {
+        return false;
+    }
+    if (ents[0] != em.entities[1]) {
+        return false;
+    } else if (ents[1] != em.entities[2]) {
+        return false;
+    }
+
+    Entity *swap = em.entities[1];
+    em.entities[1] = em.entities[3];
+    em.entities[3] = swap;
+    ents = em.getNClosestEntities(em.entities[0], 2);
+    if (ents.size() != 2) {
+        return false;
+    }
+    if (ents[0] != em.entities[3]) {
+        return false;
+    } else if (ents[1] != em.entities[2]) {
+        return false;
+    }
+
+    return true;
+}
+
 
 bool runAllTests(int n) {
     test = true;
@@ -350,6 +416,20 @@ bool runAllTests(int n) {
         allCorrect = false;
     } else {
         cerr << "\033[1;32mPassed testEntityManager_noDuplicateInventoryItems test" << endl;
+    }
+    correct = testEntity_hasAttribute();
+    if (!correct) {
+        cerr << "\033[1;31mFailed testEntity_hasAttribute test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed testEntity_hasAttribute test" << endl;
+    }
+    correct = testEntityManager_getNClosestEntities();
+    if (!correct) {
+        cerr << "\033[1;31mFailed testEntityManager_getNClosestEntities test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed testEntityManager_getNClosestEntities test" << endl;
     }
 
     cerr << "\033[0m";
