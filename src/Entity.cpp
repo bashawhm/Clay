@@ -47,17 +47,27 @@ bool Entity::hasAttribute(EntityAttributes att) {
     return false;
 }
 
-void Entity::moveX(int moveBy) {
+void Entity::moveX(SDL_Rect bounds, int moveBy) {
+    if (rRect.x > (bounds.x+bounds.w)) {
+        return;
+    } else if (rRect.x < (bounds.x)) {
+        return;
+    }
     rRect.x += moveBy;
     for (unsigned long i = 0; i < inventory.size(); ++i) {
-        inventory[i]->moveX(moveBy);
+        inventory[i]->moveX(bounds, moveBy);
     }
 }
 
-void Entity::moveY(int moveBy) {
+void Entity::moveY(SDL_Rect bounds, int moveBy) {
+    if (rRect.y > (bounds.y+bounds.h)) {
+        return;
+    } else if (rRect.y < (bounds.y)) {
+        return;
+    }
     rRect.y += moveBy;
     for (unsigned long i = 0; i < inventory.size(); ++i) {
-        inventory[i]->moveY(moveBy);
+        inventory[i]->moveY(bounds, moveBy);
     }
 
 }
@@ -124,30 +134,25 @@ void Entity::deserialize(string in) {
 }
 
 void Entity::simulate(SDL_Rect bounds) {
-    for (unsigned long i = 0; i < attributes.size(); ++i) {
-        switch(attributes[i]) {
-            case AutoWandering: {
-                int dxp = 0;
-                int dyp = 0;
-                int dxn = 0;
-                int dyn = 0;
-                if (rRect.x < (bounds.x+bounds.w)) {
-                    dxp = rand() % moveSpeed;
-                }
-                if (rRect.y < (bounds.y+bounds.h)) {
-                    dyp = rand() % moveSpeed;
-                }
-                if (rRect.x > bounds.x) {
-                    dxn = -1*rand() % moveSpeed;
-                }
-                if (rRect.y > bounds.y) {
-                    dyn = -1*rand() % moveSpeed;
-                }
-
-                moveX(dxp + dxn);
-                moveY(dyp + dyn);
-                break;
-            }
+    if (hasAttribute(AutoWandering)) {
+        int dxp = 0;
+        int dyp = 0;
+        int dxn = 0;
+        int dyn = 0;
+        if (rRect.x < (bounds.x+bounds.w)) {
+            dxp = rand() % moveSpeed;
         }
+        if (rRect.y < (bounds.y+bounds.h)) {
+            dyp = rand() % moveSpeed;
+        }
+        if (rRect.x > bounds.x) {
+            dxn = -1*rand() % moveSpeed;
+        }
+        if (rRect.y > bounds.y) {
+            dyn = -1*rand() % moveSpeed;
+        }
+
+        moveX(bounds, dxp + dxn);
+        moveY(bounds, dyp + dyn);
     }
 }

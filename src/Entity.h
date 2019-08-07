@@ -38,8 +38,8 @@ public:
     std::vector<EntityAttributes> attributes;
 
     void simulate(SDL_Rect bounds);
-    void moveX(int moveBy);
-    void moveY(int moveBy);
+    void moveX(SDL_Rect bounds, int moveBy);
+    void moveY(SDL_Rect bounds, int moveBy);
     bool hasAttribute(EntityAttributes att);
     
 

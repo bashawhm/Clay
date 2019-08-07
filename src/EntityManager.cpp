@@ -184,8 +184,8 @@ void EntityManager::handleFearfulEntity(Entity *e) {
     if (aveY < 0) {
         aggY *= -1;
     }
-    e->moveX(e->moveSpeed * aggX);
-    e->moveY(e->moveSpeed * aggY);
+    e->moveX(entities[e->floor]->rRect, e->moveSpeed * aggX);
+    e->moveY(entities[e->floor]->rRect, e->moveSpeed * aggY);
 }
 
 void EntityManager::simulate() {

@@ -140,22 +140,26 @@ int main(int argc, char **argv) {
             switch (event.key.keysym.sym) {
                 case SDLK_w: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->moveY(-player->moveSpeed);
+                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                    player->moveY(bounds, -player->moveSpeed);
                     break;
                 }
                 case SDLK_a: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->moveX(-player->moveSpeed);
+                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                    player->moveX(bounds, -player->moveSpeed);
                     break;
                 }
                 case SDLK_s: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->moveY(player->moveSpeed);
+                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                    player->moveY(bounds, player->moveSpeed);
                     break;
                 }
                 case SDLK_d: {
                     Entity *player = stage.eManager.getFollowing();
-                    player->moveX(player->moveSpeed);
+                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                    player->moveX(bounds, player->moveSpeed);
                     break;
                 }
                 case SDLK_SPACE: {
