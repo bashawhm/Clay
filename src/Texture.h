@@ -10,5 +10,8 @@ enum TextureIdx {
     Grass,
     Dot,
     TallGrass,
+    Cat,
+    Bird,
+    Player,
 };
 
