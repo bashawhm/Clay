@@ -4,7 +4,7 @@ LDFLAGS += `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lSDL2_gfx
 
 TARGET := clay
 
-SRC := main.cpp test.cpp Renderer.cpp Entity.cpp Texture.cpp json.cpp Stage.cpp EntityManager.cpp
+SRC := main.cpp test.cpp Renderer.cpp Entity.cpp Texture.cpp json.cpp Stage.cpp EntityManager.cpp levelGenerator.cpp
 
 DEPS := $(addprefix .build/,$(SRC:.cpp=.d))
 OBJS := $(addprefix .build/,$(SRC:.cpp=.o))

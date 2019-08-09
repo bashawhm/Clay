@@ -48,9 +48,9 @@ bool Entity::hasAttribute(EntityAttributes att) {
 }
 
 void Entity::moveX(SDL_Rect bounds, int moveBy) {
-    if (rRect.x > (bounds.x+bounds.w)) {
+    if (rRect.x > (bounds.x+bounds.w) && moveBy > 0) {
         return;
-    } else if (rRect.x < (bounds.x)) {
+    } else if (rRect.x < (bounds.x) && moveBy < 0) {
         return;
     }
     rRect.x += moveBy;
@@ -60,9 +60,9 @@ void Entity::moveX(SDL_Rect bounds, int moveBy) {
 }
 
 void Entity::moveY(SDL_Rect bounds, int moveBy) {
-    if (rRect.y > (bounds.y+bounds.h)) {
+    if (rRect.y > (bounds.y+bounds.h) && moveBy > 0) {
         return;
-    } else if (rRect.y < (bounds.y)) {
+    } else if (rRect.y < (bounds.y) && moveBy < 0) {
         return;
     }
     rRect.y += moveBy;
