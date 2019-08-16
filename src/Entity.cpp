@@ -31,6 +31,9 @@ Entity::Entity(string eName, int rX, int rY, int w, int h, TextureIdx t, int hth
     resolve = res;
     intimidation = intim;
     moveSpeed = mvS;
+
+    targetX = rX;
+    targetY = rY;
 }
 
 RenderModel Entity::getRenderModel() {
@@ -77,6 +80,8 @@ string Entity::serialize() {
         {"name", name},
         {"rRect", {rRect.x, rRect.y, rRect.w, rRect.h}},
         {"dRect", {dRect.x, dRect.y, dRect.w, dRect.h}},
+        {"targetX", targetX},
+        {"targetY", targetY},
         {"floor", floor},
         {"following", following},
         {"inInventory", inInventory},
@@ -114,6 +119,9 @@ void Entity::deserialize(string in) {
     dRect.w = j["dRect"][2];
     dRect.h = j["dRect"][3];
 
+    targetX = j["targetX"];
+    targetY = j["targetY"];
+
     floor = j["floor"];
     following = j["following"];
     inInventory = j["inInventory"];
@@ -135,24 +143,21 @@ void Entity::deserialize(string in) {
 
 void Entity::simulate(SDL_Rect bounds) {
     if (hasAttribute(AutoWandering)) {
-        int dxp = 0;
-        int dyp = 0;
-        int dxn = 0;
-        int dyn = 0;
-        if (rRect.x < (bounds.x+bounds.w)) {
-            dxp = rand() % moveSpeed;
+        int dx = 0, dy = 0;
+        if (targetX > rRect.x) {
+            dx = moveSpeed;
         }
-        if (rRect.y < (bounds.y+bounds.h)) {
-            dyp = rand() % moveSpeed;
+        if (targetX < rRect.x) {
+            dx = -moveSpeed;
         }
-        if (rRect.x > bounds.x) {
-            dxn = -1*rand() % moveSpeed;
+        if (targetY > rRect.y) {
+            dy = moveSpeed;
         }
-        if (rRect.y > bounds.y) {
-            dyn = -1*rand() % moveSpeed;
+        if (targetY < rRect.y) {
+            dy = -moveSpeed;
         }
 
-        moveX(bounds, dxp + dxn);
-        moveY(bounds, dyp + dyn);
+        moveX(bounds, dx);
+        moveY(bounds, dy);
     }
 }

@@ -159,6 +159,10 @@ void EntityManager::handleFearfulEntity(Entity *e) {
     vector<Entity *> ents = getNClosestEntities(e, 5);
     vector<Entity *> entsInRange;
     for (unsigned long i = 0; i < ents.size(); ++i) {
+        if (ents[i]->intimidation < e->resolve) {
+            continue;
+        }
+
         int dis = getDistanceTo(e, ents[i]);
         if (dis <= (10 * e->moveSpeed)) {
                 entsInRange.push_back(ents[i]);
@@ -188,11 +192,31 @@ void EntityManager::handleFearfulEntity(Entity *e) {
     e->moveY(entities[e->floor]->rRect, e->moveSpeed * aggY);
 }
 
+bool EntityManager::isWithinRange(int point, int target, int range) {
+    if (point == target)
+        return true;
+
+    if (point < target && point > target-range) {
+        return true;
+    }
+    if (point > target && point < target+range) {
+        return true;
+    }
+
+    return false;
+}
+
 void EntityManager::simulate() {
     for (unsigned long i = 0; i < entities.size(); ++i) {
         entities[i]->simulate(entities[entities[i]->floor]->rRect);
         if (entities[i]->hasAttribute(Fearful)) {
             handleFearfulEntity(entities[i]);
+        }
+        if (entities[i]->hasAttribute(AutoWandering)) {
+            if (isWithinRange(entities[i]->rRect.x, entities[i]->targetX, entities[i]->moveSpeed) && isWithinRange(entities[i]->rRect.y, entities[i]->targetY, entities[i]->moveSpeed)) {
+                entities[i]->targetX = (rand() % entities[(entities[i]->floor)]->rRect.w) + entities[(entities[i]->floor)]->rRect.x;
+                entities[i]->targetY = (rand() % entities[(entities[i]->floor)]->rRect.h) + entities[(entities[i]->floor)]->rRect.y; 
+            }
         }
     }
 }

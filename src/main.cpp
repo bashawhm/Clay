@@ -39,6 +39,9 @@ void showEntityStatus(Entity *e) {
     status += "Resolve: ";
         status += to_string(e->resolve);
         status += "\n";
+    status += "Intimidation: ";
+        status += to_string(e->intimidation);
+        status += "\n";
     status += "Move Speed: ";
         status += to_string(e->moveSpeed);
         status += "\n";

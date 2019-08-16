@@ -25,5 +25,6 @@ public:
     int getXDistanceTo(Entity *e, Entity *e2);
     int getYDistanceTo(Entity *e, Entity *e2);
     void handleFearfulEntity(Entity *e);
+    bool isWithinRange(int point, int target, int range);
 
 };

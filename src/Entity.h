@@ -24,6 +24,7 @@ public:
 
     SDL_Rect rRect; //Real rect, not display rect, used for simulation only
     SDL_Rect dRect; //Display rect, not the real rect, used for display only
+    int targetX, targetY;
     int floor;
     bool following;
     bool inInventory;
@@ -60,7 +61,11 @@ public:
             return false;
         } else if (dRect.h != e.dRect.h) {
             return false;
-        } else if (floor != e.floor) {
+        } else if (targetX != e.targetX) {
+            return false;
+        } else if (targetY != e.targetY) {
+            return false;
+        }  else if (floor != e.floor) {
             return false;
         } else if (following != e.following) {
             return false;

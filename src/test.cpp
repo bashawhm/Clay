@@ -341,6 +341,25 @@ bool testEntityManager_getNClosestEntities() {
     return true;
 }
 
+bool testEntityManager_isWithinRange() {
+    EntityManager em;
+    if (!em.isWithinRange(1, 5, 5)) {
+        return false;
+    }
+    if (!em.isWithinRange(9, 5, 5)) {
+        return false;
+    }
+    if (em.isWithinRange(-11, 5, 5)) {
+        return false;
+    }
+    if (em.isWithinRange(50, 5, 5)) {
+        return false;
+    }
+
+
+    return true;
+}
+
 
 bool runAllTests(int n) {
     test = true;
@@ -431,6 +450,14 @@ bool runAllTests(int n) {
     } else {
         cerr << "\033[1;32mPassed testEntityManager_getNClosestEntities test" << endl;
     }
+    correct = testEntityManager_isWithinRange();
+    if (!correct) {
+        cerr << "\033[1;31mFailed testEntityManager_isWithinRange test" << endl;
+        allCorrect = false;
+    } else {
+        cerr << "\033[1;32mPassed testEntityManager_isWithinRange test" << endl;
+    }
+
 
     cerr << "\033[0m";
     return allCorrect;    

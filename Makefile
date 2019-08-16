@@ -1,6 +1,6 @@
 CC = clang++
-CFLAGS += -pipe -std=c++11 -march=native -Wall -Wextra -Wmost -pedantic  -g  `sdl2-config --cflags` 
-LDFLAGS += `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lSDL2_gfx
+CFLAGS += -pipe -std=c++11 -march=native -Wall -Wextra -Wmost -pedantic  -g `sdl2-config --cflags` 
+LDFLAGS += `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lSDL2_gfx 
 
 TARGET := clay
 
