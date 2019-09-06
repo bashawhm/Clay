@@ -75,16 +75,10 @@ bool Renderer::isPointInRect(int rX, int rY, int x, int y, int w, int h) {
 }
 
 bool Renderer::isRectInRect(const SDL_Rect &r1, const SDL_Rect &r2) {
-    if (r2.y > (r1.y + r1.h)) {
-        return false;
-    } else if ((r2.y + r2.h) < r1.y) {
-        return false;
-    } else if (r2.x > (r1.x + r1.w)) {
-        return false;
-    } else if ((r2.x + r2.w) < r1.x) {
-        return false;
+    if (r1.x < (r2.x + r2.w) && (r1.x + r1.w) > r2.x && r1.y < (r2.y + r2.h) && (r1.y + r1.h) > r2.y) {
+        return true;
     }
-    return true;
+    return false;
 }
 
 void Renderer::getDispRect(SDL_Rect *r) {
@@ -110,25 +104,24 @@ void Renderer::setRenderableDispCoords(int idx) {
 }
 
 void Renderer::renderDraw() {
-    SDL_GetWindowSize(win, &winWidth, &winHeight);
     SDL_RenderClear(rend);
+    SDL_GetWindowSize(win, &winWidth, &winHeight);
     
     SDL_Rect dispRect;
     getDispRect(&dispRect);
 
     //There is an issue with the following code with regards to entities not rendering until 
-    //they are within some distance, even though they should be rendered the whole time
+    //they are within the initial 640 x 480, even though they should be rendered the whole time
 
     // cerr << "---------------------------------------------------" << endl;
-    // cerr << "x: " << dispRect.x <<  " y: " << dispRect.y << " w: " << dispRect.w << " h: " << dispRect.h << endl;
+    // cerr << "x: " << dispRect.x << " y: " << dispRect.y << " w: " << dispRect.w << " h: " << dispRect.h << endl;
+
     for (unsigned long i = 0; i < renderables.size(); ++i) {
         // cerr << "x: " << renderables[i].rRect.x <<  " y: " << renderables[i].rRect.y << " w: " << renderables[i].rRect.w << " h: " << renderables[i].rRect.h;
-        if (isRectInRect(renderables[i].rRect, dispRect)) {
-            // cerr << " Within";
+        // if (isRectInRect(renderables[i].rRect, dispRect)) {
             setRenderableDispCoords(i);
             SDL_RenderCopy(rend, textures[renderables[i].tex], NULL, &(renderables[i].dRect));
-        }
-        // cerr << endl;
+        // }
     }
 
     SDL_RenderPresent(rend);

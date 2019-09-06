@@ -12,6 +12,7 @@ enum EntityAttributes {
     AutoWandering,
     Carryable,
     Fearful,
+    NilSimulation,
 };
 
 class Entity {

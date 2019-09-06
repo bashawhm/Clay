@@ -1,5 +1,5 @@
 #pragma once
-#include "Entity.h"                       
+#include "Entity.h"
 #include "RenderModel.h"
 
 #include <vector>
@@ -26,5 +26,6 @@ public:
     int getYDistanceTo(Entity *e, Entity *e2);
     void handleFearfulEntity(Entity *e);
     bool isWithinRange(int point, int target, int range);
+    void retargetEntity(Entity *e);
 
 };

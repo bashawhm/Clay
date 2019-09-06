@@ -105,6 +105,11 @@ void EntityManager::addToInventory(Entity *e, Entity *item) {
     item->inInventory = true;
 }
 
+void EntityManager::retargetEntity(Entity *e) {
+    e->targetX = (rand() % entities[(e->floor)]->rRect.w) + entities[(e->floor)]->rRect.x;
+    e->targetY = (rand() % entities[(e->floor)]->rRect.h) + entities[(e->floor)]->rRect.y;
+}
+
 int EntityManager::getXDistanceTo(Entity *e, Entity *e2) {
     int origin1x = (e->rRect.x + e->rRect.w) / 2;
     int origin2x = (e2->rRect.x + e2->rRect.w) / 2;
@@ -127,7 +132,7 @@ int EntityManager::getDistanceTo(Entity *e, Entity *e2) {
     int dx = getXDistanceTo(e, e2);
     int dy = getYDistanceTo(e, e2);
 
-    return sqrt((dx * dx) + (dy * dy));;    
+    return sqrt((dx * dx) + (dy * dy));
 }
 
 
@@ -159,14 +164,11 @@ void EntityManager::handleFearfulEntity(Entity *e) {
     vector<Entity *> ents = getNClosestEntities(e, 5);
     vector<Entity *> entsInRange;
     for (unsigned long i = 0; i < ents.size(); ++i) {
-        if (ents[i]->intimidation < e->resolve) {
+        int dis = getDistanceTo(e, ents[i]);
+        if (ents[i]->intimidation - dis < e->resolve) {
             continue;
         }
-
-        int dis = getDistanceTo(e, ents[i]);
-        if (dis <= (10 * e->moveSpeed)) {
-                entsInRange.push_back(ents[i]);
-        }
+        entsInRange.push_back(ents[i]);
     }
      if (entsInRange.size() == 0) {
         return;
@@ -180,6 +182,7 @@ void EntityManager::handleFearfulEntity(Entity *e) {
     }
     aveX /= entsInRange.size();
     aveY /= entsInRange.size();
+
     int aggX = -1;
     int aggY = -1;
     if (aveX < 0) {
@@ -188,6 +191,8 @@ void EntityManager::handleFearfulEntity(Entity *e) {
     if (aveY < 0) {
         aggY *= -1;
     }
+
+    retargetEntity(e);
     e->moveX(entities[e->floor]->rRect, e->moveSpeed * aggX);
     e->moveY(entities[e->floor]->rRect, e->moveSpeed * aggY);
 }
@@ -208,14 +213,16 @@ bool EntityManager::isWithinRange(int point, int target, int range) {
 
 void EntityManager::simulate() {
     for (unsigned long i = 0; i < entities.size(); ++i) {
+        if (entities[i]->hasAttribute(NilSimulation)) {
+            continue;
+        }
         entities[i]->simulate(entities[entities[i]->floor]->rRect);
         if (entities[i]->hasAttribute(Fearful)) {
             handleFearfulEntity(entities[i]);
         }
         if (entities[i]->hasAttribute(AutoWandering)) {
             if (isWithinRange(entities[i]->rRect.x, entities[i]->targetX, entities[i]->moveSpeed) && isWithinRange(entities[i]->rRect.y, entities[i]->targetY, entities[i]->moveSpeed)) {
-                entities[i]->targetX = (rand() % entities[(entities[i]->floor)]->rRect.w) + entities[(entities[i]->floor)]->rRect.x;
-                entities[i]->targetY = (rand() % entities[(entities[i]->floor)]->rRect.h) + entities[(entities[i]->floor)]->rRect.y; 
+                retargetEntity(entities[i]);
             }
         }
     }

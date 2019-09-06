@@ -13,6 +13,7 @@ public:
         tex = t;
         moveSpeed = mvS;
     }
+
     SDL_Rect rRect;
     SDL_Rect dRect;
     bool following;

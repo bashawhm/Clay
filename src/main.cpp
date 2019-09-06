@@ -94,83 +94,91 @@ int main(int argc, char **argv) {
     //Main game loop
     while(stage.running) {
         SDL_Event event;
-        SDL_PollEvent(&event);
-        switch (event.type) {
-        case SDL_QUIT: {
-            //Save game and quit
-            string tmp = stage.serialize();
-            ofstream fout("save.json");
-            fout << tmp;
-            stage.running = false;
-            break;
-        }
-        case SDL_KEYDOWN: {
-            switch (event.key.keysym.sym) {
-                case SDLK_w: {
-                    Entity *player = stage.eManager.getFollowing();
-                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                    player->moveY(bounds, -player->moveSpeed);
-                    break;
-                }
-                case SDLK_a: {
-                    Entity *player = stage.eManager.getFollowing();
-                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                    player->moveX(bounds, -player->moveSpeed);
-                    break;
-                }
-                case SDLK_s: {
-                    Entity *player = stage.eManager.getFollowing();
-                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                    player->moveY(bounds, player->moveSpeed);
-                    break;
-                }
-                case SDLK_d: {
-                    Entity *player = stage.eManager.getFollowing();
-                    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                    player->moveX(bounds, player->moveSpeed);
-                    break;
-                }
-                case SDLK_SPACE: {
-                    Entity *player = stage.eManager.getFollowing();
-                    for (unsigned long i = 0; i < stage.eManager.entities.size(); ++i) {
-                        if (stage.eManager.entities[i]->floor == i) {
-                            continue;
-                        }
-                        if (stage.eManager.isEntityInEntity(*player, *(stage.eManager.entities[i]))) {
-                            Entity *item = stage.eManager.canPickup(*(stage.eManager.entities[i]));
-                            if (item != nullptr) {
-                                stage.eManager.addToInventory(player, item);
-                                break;
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+            case SDL_QUIT: {
+                //Save game and quit
+                string tmp = stage.serialize();
+                ofstream fout("save.json");
+                fout << tmp;
+                stage.running = false;
+                break;
+            }
+            case SDL_KEYDOWN: {
+                switch (event.key.keysym.sym) {
+                    case SDLK_w: {
+                        Entity *player = stage.eManager.getFollowing();
+                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                        player->moveY(bounds, -player->moveSpeed);
+                        break;
+                    }
+                    case SDLK_a: {
+                        Entity *player = stage.eManager.getFollowing();
+                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                        player->moveX(bounds, -player->moveSpeed);
+                        break;
+                    }
+                    case SDLK_s: {
+                        Entity *player = stage.eManager.getFollowing();
+                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                        player->moveY(bounds, player->moveSpeed);
+                        break;
+                    }
+                    case SDLK_d: {
+                        Entity *player = stage.eManager.getFollowing();
+                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                        player->moveX(bounds, player->moveSpeed);
+                        break;
+                    }
+                    case SDLK_SPACE: {
+                        Entity *player = stage.eManager.getFollowing();
+                        for (unsigned long i = 0; i < stage.eManager.entities.size(); ++i) {
+                            if (stage.eManager.entities[i]->floor == i) {
+                                continue;
+                            }
+                            if (stage.eManager.isEntityInEntity(*player, *(stage.eManager.entities[i]))) {
+                                Entity *item = stage.eManager.canPickup(*(stage.eManager.entities[i]));
+                                if (item != nullptr) {
+                                    stage.eManager.addToInventory(player, item);
+                                    break;
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
-                }
-                case SDLK_e: {
-                    Entity *player = stage.eManager.getFollowing();
-                    SDL_MessageBoxButtonData buttons = {SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "Close"};
-                    string inv;
-                    for (unsigned long i = 0; i < player->inventory.size(); ++i) {
-                        inv += player->inventory[i]->name + "\n";
+                    case SDLK_e: {
+                        Entity *player = stage.eManager.getFollowing();
+                        SDL_MessageBoxButtonData buttons = {SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "Close"};
+                        string inv;
+                        for (unsigned long i = 0; i < player->inventory.size(); ++i) {
+                            inv += player->inventory[i]->name + "\n";
+                        }
+                        SDL_MessageBoxData message = {SDL_MESSAGEBOX_INFORMATION, NULL, "Inventory", inv.c_str(), 1, &buttons, NULL};
+                        int butId;
+                        SDL_ShowMessageBox(&message, &butId);
+                        break;
                     }
-                    SDL_MessageBoxData message = {SDL_MESSAGEBOX_INFORMATION, NULL, "Inventory", inv.c_str(), 1, &buttons, NULL};
-                    int butId;
-                    SDL_ShowMessageBox(&message, &butId);
-                    break;
-                }
-                case SDLK_i: {
-                    Entity *player = stage.eManager.getFollowing();
-                    showEntityStatus(player);
-                    break;
-                }
-                case SDLK_h: {
-                    showHelp();
-                    break;
-                }
+                    case SDLK_i: {
+                        Entity *player = stage.eManager.getFollowing();
+                        showEntityStatus(player);
+                        break;
+                    }
+                    case SDLK_h: {
+                        showHelp();
+                        break;
+                    }
 
+                }
+                break;
             }
-            break;
-        }
+            case SDL_MOUSEBUTTONDOWN: {
+                int mX = 0;
+                int mY = 0;
+                SDL_GetMouseState(&mX, &mY);
+                cerr << "x: " << mX << " y: " << mY << endl;
+            }
+            }
+            
         }
 
         stage.simulate();
