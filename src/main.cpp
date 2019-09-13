@@ -51,6 +51,25 @@ void showEntityStatus(Entity *e) {
 
 }
 
+void movePlayer(Stage stage, bool sprinting, int dx, int dy) {
+    Entity *player = stage.eManager.getFollowing();
+    SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+    if (dx != 0) {
+        if (sprinting) {
+            player->moveX(bounds, player->moveSpeed * 2 * dx);
+        } else {
+            player->moveX(bounds, player->moveSpeed * dx);
+        }
+    }
+    if (dy != 0) {
+        if (sprinting) {
+            player->moveY(bounds, player->moveSpeed * 2 * dy);
+        } else {
+            player->moveY(bounds, player->moveSpeed * dy);
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
     srand(time(NULL));
@@ -195,29 +214,13 @@ int main(int argc, char **argv) {
                 // cerr << "x: " << mX << " y: " << mY << endl;
                 break;
             }
-            default: {
+            default:
                 nonKeyEvent = true;
-            }
             }
 
             //Move Player
             if (!nonKeyEvent) {
-                Entity *player = stage.eManager.getFollowing();
-                SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                if (dx != 0) {
-                    if (sprinting) {
-                        player->moveX(bounds, player->moveSpeed * 2 * dx);
-                    } else {
-                        player->moveX(bounds, player->moveSpeed * dx);
-                    }
-                }
-                if (dy != 0) {
-                    if (sprinting) {
-                        player->moveY(bounds, player->moveSpeed * 2 * dy);
-                    } else {
-                        player->moveY(bounds, player->moveSpeed * dy);
-                    }
-                }
+                movePlayer(stage, sprinting, dx, dy);
             } else {
                 nonKeyEvent = false;
             }
