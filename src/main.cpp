@@ -92,6 +92,10 @@ int main(int argc, char **argv) {
     stage.deserialize(sin.str());
 
     //Main game loop
+    bool nonKeyEvent = false;
+    bool sprinting = false;
+    int dx = 0;
+    int dy = 0;
     while(stage.running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -107,28 +111,23 @@ int main(int argc, char **argv) {
             case SDL_KEYDOWN: {
                 switch (event.key.keysym.sym) {
                     case SDLK_w: {
-                        Entity *player = stage.eManager.getFollowing();
-                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                        player->moveY(bounds, -player->moveSpeed);
+                        dy = -1;
                         break;
                     }
                     case SDLK_a: {
-                        Entity *player = stage.eManager.getFollowing();
-                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                        player->moveX(bounds, -player->moveSpeed);
+                        dx = -1;
                         break;
                     }
                     case SDLK_s: {
-                        Entity *player = stage.eManager.getFollowing();
-                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                        player->moveY(bounds, player->moveSpeed);
+                        dy = 1;
                         break;
                     }
                     case SDLK_d: {
-                        Entity *player = stage.eManager.getFollowing();
-                        SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
-                        player->moveX(bounds, player->moveSpeed);
+                        dx = 1;
                         break;
+                    }
+                    case SDLK_LSHIFT: {
+                        sprinting = true;
                     }
                     case SDLK_SPACE: {
                         Entity *player = stage.eManager.getFollowing();
@@ -171,14 +170,57 @@ int main(int argc, char **argv) {
                 }
                 break;
             }
+            case SDL_KEYUP: {
+                switch (event.key.keysym.sym) {
+                    case SDLK_LSHIFT: {
+                        sprinting = false;
+                        break;
+                    }
+                    case SDLK_w:
+                    case SDLK_s: {
+                        dy = 0;
+                        break;
+                    }
+                    case SDLK_a:
+                    case SDLK_d: {
+                        dx = 0;
+                        break;
+                    }
+                }
+            }
             case SDL_MOUSEBUTTONDOWN: {
                 int mX = 0;
                 int mY = 0;
                 SDL_GetMouseState(&mX, &mY);
-                cerr << "x: " << mX << " y: " << mY << endl;
+                // cerr << "x: " << mX << " y: " << mY << endl;
+                break;
+            }
+            default: {
+                nonKeyEvent = true;
             }
             }
-            
+
+            //Move Player
+            if (!nonKeyEvent) {
+                Entity *player = stage.eManager.getFollowing();
+                SDL_Rect bounds = stage.eManager.entities[player->floor]->rRect;
+                if (dx != 0) {
+                    if (sprinting) {
+                        player->moveX(bounds, player->moveSpeed * 2 * dx);
+                    } else {
+                        player->moveX(bounds, player->moveSpeed * dx);
+                    }
+                }
+                if (dy != 0) {
+                    if (sprinting) {
+                        player->moveY(bounds, player->moveSpeed * 2 * dy);
+                    } else {
+                        player->moveY(bounds, player->moveSpeed * dy);
+                    }
+                }
+            } else {
+                nonKeyEvent = false;
+            }
         }
 
         stage.simulate();
